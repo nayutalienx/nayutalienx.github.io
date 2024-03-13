@@ -1,16 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {API_HOST} from "../config/app_config";
 import Stack from "@mui/material/Stack";
 import Comment from "./comment"
-import {useInitData} from "@vkruglikov/react-telegram-web-app";
+import {TelegramContext} from "../app";
+
 
 export default function CommentList({issueId, onLoaded}) {
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [initDataUnsafe] = useInitData();
-    const telegramChatId = initDataUnsafe.user.id;
+
+    const {tgCtx} = useContext(TelegramContext);
+    const telegramChatId = tgCtx.initDataUnsafe.user.id;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -36,7 +38,7 @@ export default function CommentList({issueId, onLoaded}) {
         fetchData();
     }, []);
 
-    return loading ? <div></div> :<Stack spacing={1}>
+    return loading ? <div></div> : <Stack spacing={1}>
         {data.data.map((item) => (
             item.public && <Comment key={item.id} issueId={issueId} data={item}></Comment>
         ))}

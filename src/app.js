@@ -10,8 +10,6 @@ import ApplicationList from "./component/application_list";
 import MaintenanceList from "./component/maintenance_list";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import StoreIcon from '@mui/icons-material/Store';
-import { useExpand } from "@vkruglikov/react-telegram-web-app";
-
 
 
 const darkTheme = createTheme({
@@ -20,9 +18,15 @@ const darkTheme = createTheme({
     },
 });
 
+export const TelegramContext = React.createContext(null);
+
 export default function App() {
-    const [isExpanded, expand] = useExpand();
-    expand();
+    const [tgCtx, setTgCtx] = React.useState(null);
+    if (tgCtx === null) {
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        setTgCtx(tg);
+    }
 
     const [value, setValue] = React.useState('1');
 
@@ -33,18 +37,20 @@ export default function App() {
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline/>
-            <Box>
-                <TabContext value={value}>
-                    <Box>
-                        <TabList onChange={handleChange}>
-                            <Tab icon={<AssignmentIcon/>} iconPosition="start" label="Заявки" value="1"/>
-                            <Tab icon={<StoreIcon/>} iconPosition="start" label="Объекты" value="2"/>
-                        </TabList>
-                    </Box>
-                    <TabPanel value="1"><ApplicationList/></TabPanel>
-                    <TabPanel value="2"><MaintenanceList/></TabPanel>
-                </TabContext>
-            </Box>
+            <TelegramContext.Provider value={{tgCtx: tgCtx, setTgCtx: setTgCtx}}>
+                <Box>
+                    <TabContext value={value}>
+                        <Box>
+                            <TabList onChange={handleChange}>
+                                <Tab icon={<AssignmentIcon/>} iconPosition="start" label="Заявки" value="1"/>
+                                <Tab icon={<StoreIcon/>} iconPosition="start" label="Объекты" value="2"/>
+                            </TabList>
+                        </Box>
+                        <TabPanel value="1"><ApplicationList/></TabPanel>
+                        <TabPanel value="2"><MaintenanceList/></TabPanel>
+                    </TabContext>
+                </Box>
+            </TelegramContext.Provider>
         </ThemeProvider>
     );
 }

@@ -5,12 +5,15 @@ import {Button, Chip, Grid} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import * as React from "react";
 import {API_HOST} from "../config/app_config";
-import {useInitData} from "@vkruglikov/react-telegram-web-app";
+import {TelegramContext} from "../app";
+import {useContext} from "react";
+
 
 export default function Maintenance({data}) {
 
-    const [initDataUnsafe] = useInitData();
-    const telegramChatId = initDataUnsafe.user.id;
+
+    const {tgCtx} = useContext(TelegramContext);
+    const telegramChatId = tgCtx.initDataUnsafe.user.id;
 
     const sendIssue = (maintenanceId) => {
         fetch(`${API_HOST}/issues/${maintenanceId}`, {
@@ -20,7 +23,7 @@ export default function Maintenance({data}) {
                 Accept: 'application/json',
             },
         }).then(r => {
-            // todo: close tg
+            tgCtx.close();
         });
     };
 

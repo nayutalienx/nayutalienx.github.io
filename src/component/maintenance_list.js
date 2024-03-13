@@ -3,17 +3,19 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
 import Application from "./application";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {API_HOST} from "../config/app_config";
 import Maintenance from "./maintenance";
-import {useInitData} from "@vkruglikov/react-telegram-web-app";
+import {TelegramContext} from "../app";
+
 
 export default function MaintenanceList() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [initDataUnsafe] = useInitData();
-    const telegramChatId = initDataUnsafe.user.id;
+
+    const {tgCtx} = useContext(TelegramContext);
+    const telegramChatId = tgCtx.initDataUnsafe.user.id;
 
     useEffect(() => {
         const fetchData = async () => {

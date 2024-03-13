@@ -11,14 +11,14 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
-import {useState} from "react";
+import {useContext, useState} from "react";
 
 import Collapse from '@mui/material/Collapse';
 import Stack from "@mui/material/Stack";
 import CommentList from "./comment_list";
 import SendIcon from '@mui/icons-material/Send';
 import {API_HOST} from "../config/app_config";
-import {useInitData} from "@vkruglikov/react-telegram-web-app";
+import {TelegramContext} from "../app";
 
 
 function dataRow(name, value) {
@@ -45,8 +45,9 @@ export default function Application({data, detail}) {
         setCommandsLoading(false);
     }
 
-    const [initDataUnsafe] = useInitData();
-    const telegramChatId = initDataUnsafe.user.id;
+
+    const {tgCtx} = useContext(TelegramContext);
+    const telegramChatId = tgCtx.initDataUnsafe.user.id;
 
     const sendComment = (issueId) => {
         fetch(`${API_HOST}/issues/${issueId}/comments`, {
@@ -56,7 +57,7 @@ export default function Application({data, detail}) {
                 Accept: 'application/json',
             },
         }).then(r => {
-            // todo: close tg
+            tgCtx.close();
         });
     };
 
@@ -97,7 +98,8 @@ export default function Application({data, detail}) {
             <Grid container justifyContent="flex-end">
 
                 <ButtonGroup variant="outlined" aria-label="Loading button group">
-                    <LoadingButton size="small" loading={commentsLoading} onClick={loadComments}>Комментарии</LoadingButton>
+                    <LoadingButton size="small" loading={commentsLoading}
+                                   onClick={loadComments}>Комментарии</LoadingButton>
                     <Button size="small" variant="contained"
                             onClick={() => sendComment(data.id)}
                             endIcon={<SendIcon/>}>Отправить</Button>

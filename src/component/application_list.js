@@ -1,11 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {API_HOST, telegramChatId} from "../config/app_config";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import Application from "./application";
-
-import { useInitData } from '@vkruglikov/react-telegram-web-app';
+import {TelegramContext} from "../app";
 
 
 
@@ -14,8 +13,8 @@ export default function ApplicationList() {
     const [detailsMap, setDetailsMap] = useState(new Map());
     const [loading, setLoading] = useState(true);
 
-    const [initDataUnsafe] = useInitData();
-    const telegramChatId = initDataUnsafe.user.id;
+    const {tgCtx} = useContext(TelegramContext);
+    const telegramChatId = tgCtx.initDataUnsafe.user.id;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -72,5 +71,8 @@ export default function ApplicationList() {
                     <Application key={item.id} data={item} detail={detailsMap.get(item.id)}/>
                 ))}
             </Stack>}
+        <br/>
+        <br/>
+        <br/>
     </div>
 }

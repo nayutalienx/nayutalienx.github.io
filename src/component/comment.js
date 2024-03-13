@@ -8,12 +8,15 @@ import {API_HOST} from "../config/app_config";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import {Grid} from "@mui/material";
-import {useInitData} from "@vkruglikov/react-telegram-web-app";
+import {TelegramContext} from "../app";
+import {useContext} from "react";
+
 
 export default function Comment({issueId, data}) {
 
-    const [initDataUnsafe] = useInitData();
-    const telegramChatId = initDataUnsafe.user.id;
+
+    const {tgCtx} = useContext(TelegramContext);
+    const telegramChatId = tgCtx.initDataUnsafe.user.id;
 
     const sendAttachment = (attachmentId) => {
         fetch(`${API_HOST}/issues/${issueId}/comments/attachments/${attachmentId}`, {
@@ -23,7 +26,7 @@ export default function Comment({issueId, data}) {
                 Accept: 'application/json',
             },
         }).then(r => {
-            // todo: close tg
+            tgCtx.close();
         });
     };
 
